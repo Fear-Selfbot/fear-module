@@ -113,7 +113,7 @@ class FearModule(ABC):
         handlers = []
 
         for command in self._commands:
-            if command.client_type == client_type:
+            if client_type in command.client_type:
                 handlers.extend(command.handlers)
 
         if self.client_type == client_type:
