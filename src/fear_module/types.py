@@ -89,7 +89,7 @@ class FearModule(ABC):
 
     @property
     def header(self) -> str:
-        return f"{type(self).name} ({type(self).version})"
+        return f"> **{type(self).name}** __({type(self).version})__"
 
     def get_commands(self, client_type: ClientType) -> str:
         return f"{self.header}\n" + "\n".join(
