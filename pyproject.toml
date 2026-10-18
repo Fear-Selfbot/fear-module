@@ -1,0 +1,16 @@
+[project]
+name = "fear-module"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Keva1z", email = "Keva1z@yandex.ru" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "kurigram>=2.2.26",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.10,<0.13.0"]
+build-backend = "uv_build"
