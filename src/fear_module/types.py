@@ -1,9 +1,28 @@
 from abc import ABC
 from enum import Enum
 
-from pyrogram import filters
+from pyrogram import Client, filters
 from pyrogram.handlers import BusinessConnectionHandler, BusinessMessageHandler, Handler
+
 from .protocols import FearClientProtocol
+
+
+class FearBot(Client):
+    def __init__(self, *args, **kwargs):
+        self.client: FearClient
+        super().__init__(*args, **kwargs)
+
+
+class FearUser(Client):
+    def __init__(self, *args, **kwargs):
+        self.client: FearClient
+        super().__init__(*args, **kwargs)
+
+
+class FearClient:
+    def __init__(self, *args, **kwargs):
+        self.user: FearUser
+        self.bot: FearBot
 
 
 class ClientType(Enum):
