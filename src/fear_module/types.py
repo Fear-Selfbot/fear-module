@@ -45,6 +45,7 @@ class FearModule(ABC):
     name: str = "undefined"
     version: str = "1.0.0"
     author: str = "Name"
+    client_type: ClientType = ClientType.USER
 
     def __init__(self):
         self._commands: list[Command] = []
@@ -56,13 +57,25 @@ class FearModule(ABC):
             command.info for command in self._commands
         )
 
-    @property
-    def handlers(self):
-        handlers: list[Handler] = []
+    def get_handlers(self, client_type: ClientType) -> list[Handler]:
+        handlers = []
+
         for command in self._commands:
-            handlers.extend(command.handlers)
-        handlers.extend(self._handlers)
+            if command.client_type == client_type:
+                handlers.extend(command.handlers)
+
+        if self.client_type == client_type:
+            handlers.extend(self._handlers)
+
         return handlers
+
+    @property
+    def user_handlers(self) -> list[Handler]:
+        return self.get_handlers(ClientType.USER)
+
+    @property
+    def bot_handlers(self) -> list[Handler]:
+        return self.get_handlers(ClientType.BOT)
 
     def add_command(self, command: Command):
         self._commands.append(command)
