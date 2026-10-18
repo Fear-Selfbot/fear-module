@@ -106,6 +106,9 @@ class FearModule(ABC):
 
         return handlers
 
+    def register(self) -> None:
+        """Registrate handlers on start"""
+
     @property
     def user_handlers(self) -> list[Handler]:
         return self.get_handlers(ClientType.USER)
