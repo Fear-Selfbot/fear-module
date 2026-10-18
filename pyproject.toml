@@ -1,7 +1,7 @@
 [project]
 name = "fear-module"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.1.1"
+description = "FearModule SDK for FearClient module system"
 readme = "README.md"
 authors = [
     { name = "Keva1z", email = "Keva1z@yandex.ru" }
