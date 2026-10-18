@@ -14,8 +14,10 @@ class FearClientProtocol(Protocol):
 
 
 class FearUserProtocol(Protocol):
-    client: FearClientProtocol
+    @property
+    def client(self) -> FearClientProtocol: ...
 
 
 class FearBotProtocol(Protocol):
-    client: FearClientProtocol
+    @property
+    def client(self) -> FearClientProtocol: ...
