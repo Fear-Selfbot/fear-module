@@ -63,7 +63,7 @@ class Command:
             self.scope = [scope] if isinstance(scope, ChatType) else scope
 
     def check_scope(self, scope: ChatType | None) -> bool:
-        if len(self.scope):
+        if len(self.scope) and scope:
             return scope in self.scope
         return True
 
