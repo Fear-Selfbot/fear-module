@@ -1,43 +1,9 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 from enum import Enum
 
-from pyrogram import Client, filters, types
+from pyrogram import filters
 from pyrogram.handlers import BusinessConnectionHandler, BusinessMessageHandler, Handler
-
-
-class UserMethods(Client, ABC):
-    @abstractmethod
-    async def send_message_wait(
-        self,
-        chat_id: str | int,
-        text: str,
-        wait_from: str | int | None = None,
-        delete: bool = False,
-        timeout: int = 30,
-    ) -> types.Message | None: ...
-
-
-class FearBot(Client, ABC):
-    def __init__(self, *args, **kwargs):
-        self.client: FearClient
-
-
-class FearUser(UserMethods, ABC):
-    def __init__(self, *args, **kwargs):
-        self.client: FearClient
-
-
-class FearClient(ABC):
-    def __init__(self, *args, **kwargs):
-        self._loaded_modules: list[FearModule] = []
-        self._user: FearUser
-        self._bot: FearBot
-
-    @abstractmethod
-    def unload_modules(self): ...
-
-    @abstractmethod
-    def load_modules(self): ...
+from .protocols import FearClientProtocol
 
 
 class ClientType(Enum):
@@ -82,7 +48,7 @@ class FearModule(ABC):
     author: str = "Name"
     client_type: ClientType = ClientType.USER
 
-    def __init__(self, client: FearClient):
+    def __init__(self, client: FearClientProtocol):
         self.client = client
         self._commands: list[Command] = []
         self._handlers: list[Handler] = []
