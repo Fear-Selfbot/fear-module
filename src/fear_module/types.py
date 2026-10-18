@@ -1,4 +1,5 @@
 from abc import ABC
+from collections.abc import Iterable
 from enum import Enum
 
 from pyrogram import Client, filters
@@ -121,8 +122,12 @@ class FearModule(ABC):
     def bot_commands(self) -> str:
         return self.get_commands(ClientType.BOT)
 
-    def add_command(self, command: Command):
-        self._commands.append(command)
+    def add_commands(self, commands: Command | Iterable[Command]):
+        if isinstance(commands, Command):
+            commands = [commands]
+        self._commands.extend(commands)
 
-    def add_handler(self, handler: Handler):
-        self._handlers.append(handler)
+    def add_handlers(self, handlers: Handler | Iterable[Handler]):
+        if isinstance(handlers, Handler):
+            handlers = [handlers]
+        self._handlers.extend(handlers)
