@@ -24,10 +24,10 @@ class FearClient:
         self.user: FearUser
         self.bot: FearBot
 
-    def unload_modules():
+    def unload_modules(self):
         pass
 
-    def load_modules():
+    def load_modules(self):
         pass
 
 
