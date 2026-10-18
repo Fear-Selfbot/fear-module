@@ -1,8 +1,43 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from enum import Enum
 
-from pyrogram import filters
+from pyrogram import Client, filters, types
 from pyrogram.handlers import BusinessConnectionHandler, BusinessMessageHandler, Handler
+
+
+class UserMethods(Client, ABC):
+    @abstractmethod
+    async def send_message_wait(
+        self,
+        chat_id: str | int,
+        text: str,
+        wait_from: str | int | None = None,
+        delete: bool = False,
+        timeout: int = 30,
+    ) -> types.Message | None: ...
+
+
+class FearBot(Client, ABC):
+    def __init__(self, *args, **kwargs):
+        self.client: FearClient
+
+
+class FearUser(UserMethods, ABC):
+    def __init__(self, *args, **kwargs):
+        self.client: FearClient
+
+
+class FearClient(ABC):
+    def __init__(self, *args, **kwargs):
+        self._loaded_modules: list[FearModule] = []
+        self._user: FearUser
+        self._bot: FearBot
+
+    @abstractmethod
+    def unload_modules(self): ...
+
+    @abstractmethod
+    def load_modules(self): ...
 
 
 class ClientType(Enum):
@@ -47,14 +82,20 @@ class FearModule(ABC):
     author: str = "Name"
     client_type: ClientType = ClientType.USER
 
-    def __init__(self):
+    def __init__(self, client: FearClient):
+        self.client = client
         self._commands: list[Command] = []
         self._handlers: list[Handler] = []
 
     @property
-    def commands(self):
-        return f"-- {type(self).name} ({type(self).version}) --\n" + "\n".join(
-            command.info for command in self._commands
+    def header(self) -> str:
+        return f"{type(self).name} ({type(self).version})"
+
+    def get_commands(self, client_type: ClientType) -> str:
+        return f"{self.header}\n" + "\n".join(
+            command.info
+            for command in self._commands
+            if command.client_type == client_type
         )
 
     def get_handlers(self, client_type: ClientType) -> list[Handler]:
@@ -76,6 +117,14 @@ class FearModule(ABC):
     @property
     def bot_handlers(self) -> list[Handler]:
         return self.get_handlers(ClientType.BOT)
+
+    @property
+    def user_commands(self) -> str:
+        return self.get_commands(ClientType.USER)
+
+    @property
+    def bot_commands(self) -> str:
+        return self.get_commands(ClientType.BOT)
 
     def add_command(self, command: Command):
         self._commands.append(command)
