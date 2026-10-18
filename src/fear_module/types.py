@@ -3,7 +3,6 @@ from collections.abc import Iterable
 from enum import Enum
 
 from pyrogram import Client, filters
-from pyrogram.enums import ChatType
 from pyrogram.handlers import BusinessConnectionHandler, BusinessMessageHandler, Handler
 
 from .protocols import FearClientProtocol
@@ -49,7 +48,6 @@ class Command:
         prefix: str = "/",
         description: str = "",
         clientTypes: ClientType | list[ClientType] = ClientType.USER,
-        scope: ChatType | list[ChatType] | None = None,
     ):
         self.prefix = prefix
         self.name = name
@@ -58,14 +56,6 @@ class Command:
         self.client_type = (
             [clientTypes] if isinstance(clientTypes, ClientType) else clientTypes
         )
-        self.scope: list[ChatType] = []
-        if scope:
-            self.scope = [scope] if isinstance(scope, ChatType) else scope
-
-    def check_scope(self, scope: ChatType | None) -> bool:
-        if len(self.scope):
-            return scope in self.scope
-        return True
 
     @property
     def filter(self):
@@ -84,6 +74,9 @@ class Command:
             raise ValueError("Business handlers are not supported for USER client.")
         self.handlers.append(handler)
 
+    def copy_without_handlers(self) -> Command:
+        return Command(self.name, self.prefix, self.description, self.client_type)
+
 
 class FearModule(ABC):
     name: str = "undefined"
@@ -100,13 +93,11 @@ class FearModule(ABC):
     def header(self) -> str:
         return f"{type(self).name} ({type(self).version})"
 
-    def get_commands(
-        self, client_type: ClientType, scope: ChatType | None = None
-    ) -> str:
+    def get_commands(self, client_type: ClientType) -> str:
         return f"{self.header}\n" + "\n".join(
             command.info
             for command in self._commands
-            if client_type in command.client_type and command.check_scope(scope)
+            if client_type in command.client_type
         )
 
     def get_handlers(self, client_type: ClientType) -> list[Handler]:
