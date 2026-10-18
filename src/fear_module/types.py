@@ -3,6 +3,7 @@ from collections.abc import Iterable
 from enum import Enum
 
 from pyrogram import Client, filters
+from pyrogram.enums import ChatType
 from pyrogram.handlers import BusinessConnectionHandler, BusinessMessageHandler, Handler
 
 from .protocols import FearClientProtocol
@@ -48,12 +49,16 @@ class Command:
         prefix: str = "/",
         description: str = "",
         clientType: ClientType = ClientType.USER,
+        scope: ChatType | list[ChatType] | None = None,
     ):
         self.prefix = prefix
         self.name = name
         self.description = description
         self.handlers: list[Handler] = []
         self.client_type = clientType
+        self.scope: list[ChatType] = []
+        if scope:
+            self.scope = [scope] if isinstance(scope, ChatType) else scope
 
     @property
     def filter(self):
@@ -87,11 +92,13 @@ class FearModule(ABC):
     def header(self) -> str:
         return f"{type(self).name} ({type(self).version})"
 
-    def get_commands(self, client_type: ClientType) -> str:
+    def get_commands(
+        self, client_type: ClientType, scope: ChatType | None = None
+    ) -> str:
         return f"{self.header}\n" + "\n".join(
             command.info
             for command in self._commands
-            if command.client_type == client_type
+            if command.client_type == client_type and scope in command.scope
         )
 
     def get_handlers(self, client_type: ClientType) -> list[Handler]:
