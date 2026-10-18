@@ -24,6 +24,12 @@ class FearClient:
         self.user: FearUser
         self.bot: FearBot
 
+    def unload_modules():
+        pass
+
+    def load_modules():
+        pass
+
 
 class ClientType(Enum):
     USER = "User"
