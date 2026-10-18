@@ -48,17 +48,24 @@ class Command:
         name: str,
         prefix: str = "/",
         description: str = "",
-        clientType: ClientType = ClientType.USER,
+        clientTypes: ClientType | list[ClientType] = ClientType.USER,
         scope: ChatType | list[ChatType] | None = None,
     ):
         self.prefix = prefix
         self.name = name
         self.description = description
         self.handlers: list[Handler] = []
-        self.client_type = clientType
+        self.client_type = (
+            [clientTypes] if isinstance(clientTypes, ClientType) else clientTypes
+        )
         self.scope: list[ChatType] = []
         if scope:
             self.scope = [scope] if isinstance(scope, ChatType) else scope
+
+    def check_scope(self, scope: ChatType | None) -> bool:
+        if len(self.scope):
+            return scope in self.scope
+        return True
 
     @property
     def filter(self):
@@ -71,7 +78,8 @@ class Command:
     def add_handler(self, handler: Handler):
         if (
             isinstance(handler, (BusinessConnectionHandler, BusinessMessageHandler))
-            and self.client_type == ClientType.USER
+            and len(self.client_type) == 1
+            and ClientType.USER in self.client_type
         ):
             raise ValueError("Business handlers are not supported for USER client.")
         self.handlers.append(handler)
@@ -98,7 +106,7 @@ class FearModule(ABC):
         return f"{self.header}\n" + "\n".join(
             command.info
             for command in self._commands
-            if command.client_type == client_type and scope in command.scope
+            if client_type in command.client_type and command.check_scope(scope)
         )
 
     def get_handlers(self, client_type: ClientType) -> list[Handler]:
