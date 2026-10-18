@@ -62,7 +62,7 @@ class Command:
 
     @property
     def info(self):
-        return f"{self.prefix}{self.name} - {self.description}"
+        return f"**{self.prefix}{self.name}** - __{self.description}__"
 
     def add_handler(self, handler: Handler):
         if (
