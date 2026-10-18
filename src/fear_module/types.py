@@ -39,6 +39,7 @@ class FearClient:
 class ClientType(Enum):
     USER = "User"
     BOT = "Bot"
+    SECRETARY = "Secretary"
 
 
 class Command:
@@ -47,15 +48,13 @@ class Command:
         name: str,
         prefix: str = "/",
         description: str = "",
-        clientTypes: ClientType | list[ClientType] = ClientType.USER,
+        clientType: ClientType = ClientType.USER,
     ):
         self.prefix = prefix
         self.name = name
         self.description = description
         self.handlers: list[Handler] = []
-        self.client_type = (
-            [clientTypes] if isinstance(clientTypes, ClientType) else clientTypes
-        )
+        self.client_type = clientType
 
     @property
     def filter(self):
@@ -68,8 +67,7 @@ class Command:
     def add_handler(self, handler: Handler):
         if (
             isinstance(handler, (BusinessConnectionHandler, BusinessMessageHandler))
-            and len(self.client_type) == 1
-            and ClientType.USER in self.client_type
+            and ClientType.USER == self.client_type
         ):
             raise ValueError("Business handlers are not supported for USER client.")
         self.handlers.append(handler)
@@ -97,14 +95,14 @@ class FearModule(ABC):
         return f"{self.header}\n" + "\n".join(
             command.info
             for command in self._commands
-            if client_type in command.client_type
+            if client_type == command.client_type
         )
 
     def get_handlers(self, client_type: ClientType) -> list[Handler]:
         handlers = []
 
         for command in self._commands:
-            if client_type in command.client_type:
+            if client_type == command.client_type:
                 handlers.extend(command.handlers)
 
         if self.client_type == client_type:
