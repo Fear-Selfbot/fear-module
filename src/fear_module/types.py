@@ -74,8 +74,8 @@ class Command:
             raise ValueError("Business handlers are not supported for USER client.")
         self.handlers.append(handler)
 
-    def copy_without_handlers(self) -> Command:
-        return Command(self.name, self.prefix, self.description, self.client_type)
+    def copy_without_handlers(self, clientType: ClientType) -> Command:
+        return Command(self.name, self.prefix, self.description, clientType)
 
 
 class FearModule(ABC):
