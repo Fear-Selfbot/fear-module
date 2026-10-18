@@ -1,4 +1,7 @@
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol
+
+if TYPE_CHECKING:
+    from .types import FearModule
 
 
 class FearClientProtocol(Protocol):
@@ -8,9 +11,14 @@ class FearClientProtocol(Protocol):
     @property
     def bot(self) -> FearBotProtocol: ...
 
+    @property
+    def modules(self) -> list[FearModule]: ...
+
     def load_modules(self) -> None: ...
 
     def unload_modules(self) -> None: ...
+
+    def schedule_restart(self) -> None: ...
 
 
 class FearUserProtocol(Protocol):

@@ -23,11 +23,15 @@ class FearClient:
     def __init__(self, *args, **kwargs):
         self.user: FearUser
         self.bot: FearBot
+        self.modules: list[FearModule]
 
     def unload_modules(self):
         pass
 
     def load_modules(self):
+        pass
+
+    def schedule_restart(self):
         pass
 
 
