@@ -1,6 +1,6 @@
 [project]
 name = "fear-module"
-version = "0.1.1"
+version = "0.1.2"
 description = "FearModule SDK for FearClient module system"
 readme = "README.md"
 authors = [
