@@ -10,30 +10,32 @@ from .protocols import FearClientProtocol
 
 class FearBot(Client):
     def __init__(self, *args, **kwargs):
-        self.client: FearClient
+        self.client: FearClientProtocol
         super().__init__(*args, **kwargs)
 
 
 class FearUser(Client):
     def __init__(self, *args, **kwargs):
-        self.client: FearClient
+        self.client: FearClientProtocol
         super().__init__(*args, **kwargs)
 
 
 class FearClient:
+    """Compatibility scaffold; the host application supplies the implementation."""
+
     def __init__(self, *args, **kwargs):
         self.user: FearUser
         self.bot: FearBot
         self.modules: list[FearModule]
 
     def unload_modules(self):
-        pass
+        raise NotImplementedError("FearClient behavior is provided by the host")
 
     def load_modules(self):
-        pass
+        raise NotImplementedError("FearClient behavior is provided by the host")
 
     def schedule_restart(self):
-        pass
+        raise NotImplementedError("FearClient behavior is provided by the host")
 
 
 class ClientType(Enum):

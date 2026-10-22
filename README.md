@@ -1,8 +1,14 @@
-# FearModule SDK
+# Fear Module SDK
 
-FearModule SDK is library for developers to create new modules
-for FearClient.
+`fear-module` is the Python 3.14+ SDK for modules loaded by [Fear](https://github.com/Fear-Selfbot/fear). It provides `FearModule`, `Command`, `ClientType`, Telegram client types, and protocols describing the host application.
 
-## Example's
+Modules subclass `FearModule`, accept a host client, register commands with `add_commands()`, and attach Kurigram handlers through `Command.add_handler()` or `add_handlers()`. The host is responsible for importing modules and connecting handlers to its user and bot clients. `FearClientProtocol` is the host contract; `FearClient` is retained as a compatibility scaffold and raises `NotImplementedError` for host operations.
 
-A bit later i will create example module & update this Readme
+See [SDK API and example](docs/api.md), [review status](docs/code-review.md), and Fear's [module authoring guide](https://github.com/Fear-Selfbot/fear/blob/main/docs/modules.md).
+
+## Development checks
+
+```sh
+uv run --locked python -m unittest discover -s tests -v
+uv lock --check
+```

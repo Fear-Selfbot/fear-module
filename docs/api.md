@@ -8,7 +8,7 @@
 
 `Command(name, prefix="/", description="", clientType=ClientType.USER)` создаёт фильтр Kurigram через `command.filter`, строку справки через `command.info` и список обработчиков. `add_handler()` добавляет обработчик. `FearModule` принимает хост-клиент в конструкторе, хранит команды через `add_commands()` и общие обработчики через `add_handlers()`. Реализация фильтрует команды и обработчики по `ClientType`.
 
-Типы клиента: `USER`, `BOT`, `SECRETARY`. Хост Fear подключает `SECRETARY`-обработчики к своему bot-клиенту. Переопределите `register()` для настройки команд/обработчиков при каждой загрузке. Сам SDK не загружает модули и не управляет Telegram-клиентами; его `FearClient` методы загрузки и перезапуска являются пустыми заглушками.
+Типы клиента: `USER`, `BOT`, `SECRETARY`. Хост Fear подключает `SECRETARY`-обработчики к своему bot-клиенту. Переопределите `register()` для настройки команд/обработчиков при каждой загрузке. Сам SDK не загружает модули и не управляет Telegram-клиентами. `FearClientProtocol` описывает контракт хоста; экспортируемый `FearClient` оставлен как совместимый каркас и его методы завершаются `NotImplementedError`.
 
 ```python
 from fear_module import Command, FearModule
@@ -31,4 +31,4 @@ class HelloModule(FearModule):
 
 ## Сборка и текущее состояние
 
-Проверки разработки: `python -m compileall -q src test.py`, `uv lock --check`. `test.py` сейчас не является исполняемым примером для текущего API. Инструкции хоста и его сценарий загрузки описаны в документации репозитория Fear.
+Проверки разработки: `python -m compileall -q src tests`, `uv lock --check`, `uv run --locked python -m unittest discover -s tests -v`. Инструкции хоста и его сценарий загрузки описаны в документации репозитория Fear.
