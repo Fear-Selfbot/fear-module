@@ -1,9 +1,16 @@
 import unittest
 from types import SimpleNamespace
+from typing import cast
 
 from pyrogram.handlers import MessageHandler
 
-from fear_module import ClientType, Command, FearClient, FearModule
+from fear_module import (
+    ClientType,
+    Command,
+    FearClient,
+    FearClientProtocol,
+    FearModule,
+)
 
 
 async def handler(client, message):
@@ -16,7 +23,10 @@ class ExampleModule(FearModule):
 
 class FearModuleTests(unittest.TestCase):
     def setUp(self):
-        self.client = SimpleNamespace(user=object(), bot=object(), modules=[])
+        self.client = cast(
+            FearClientProtocol,
+            SimpleNamespace(user=object(), bot=object(), modules=[]),
+        )
         self.module = ExampleModule(self.client)
 
     def test_command_handler_is_returned_only_for_its_client_type(self):

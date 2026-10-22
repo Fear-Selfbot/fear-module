@@ -1,6 +1,9 @@
 from typing import TYPE_CHECKING, Protocol
+from collections.abc import Callable
 
 if TYPE_CHECKING:
+    from pyrogram.types import User
+
     from .types import FearModule
 
 
@@ -20,8 +23,17 @@ class FearClientProtocol(Protocol):
 
     def schedule_restart(self) -> None: ...
 
+    def schedule_reload(
+        self,
+        on_success: Callable[[], None] | None = None,
+        on_failure: Callable[[Exception], None] | None = None,
+    ) -> None: ...
+
 
 class FearUserProtocol(Protocol):
+    @property
+    def me(self) -> User | None: ...
+
     @property
     def client(self) -> FearClientProtocol: ...
 

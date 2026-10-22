@@ -20,3 +20,4 @@
 - `python -m compileall -q src tests`
 - `uv lock --check`
 - `uv run --locked python -m unittest discover -s tests -v`
+- `ty check`

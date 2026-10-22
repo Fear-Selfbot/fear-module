@@ -1,11 +1,14 @@
 from abc import ABC
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from enum import Enum
+import logging
 
 from pyrogram import Client, filters
 from pyrogram.handlers import BusinessConnectionHandler, BusinessMessageHandler, Handler
 
 from .protocols import FearClientProtocol
+
+log = logging.getLogger(__name__)
 
 
 class FearBot(Client):
@@ -35,6 +38,13 @@ class FearClient:
         raise NotImplementedError("FearClient behavior is provided by the host")
 
     def schedule_restart(self):
+        raise NotImplementedError("FearClient behavior is provided by the host")
+
+    def schedule_reload(
+        self,
+        on_success: Callable[[], None] | None = None,
+        on_failure: Callable[[Exception], None] | None = None,
+    ) -> None:
         raise NotImplementedError("FearClient behavior is provided by the host")
 
 
@@ -73,6 +83,7 @@ class Command:
         ):
             raise ValueError("Business handlers are not supported for USER client.")
         self.handlers.append(handler)
+        log.debug("Added handler to command %s (%s)", self.name, self.client_type.value)
 
     def copy_without_handlers(self, clientType: ClientType) -> Command:
         return Command(self.name, self.prefix, self.description, clientType)
@@ -134,9 +145,13 @@ class FearModule(ABC):
     def add_commands(self, commands: Command | Iterable[Command]):
         if isinstance(commands, Command):
             commands = [commands]
-        self._commands.extend(commands)
+        added_commands = list(commands)
+        self._commands.extend(added_commands)
+        log.debug("Added %d commands to module %s", len(added_commands), type(self).name)
 
     def add_handlers(self, handlers: Handler | Iterable[Handler]):
         if isinstance(handlers, Handler):
             handlers = [handlers]
-        self._handlers.extend(handlers)
+        added_handlers = list(handlers)
+        self._handlers.extend(added_handlers)
+        log.debug("Added %d handlers to module %s", len(added_handlers), type(self).name)
